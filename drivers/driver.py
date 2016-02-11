@@ -1,4 +1,4 @@
-from Magellan_labeling import controller
+from magellan_labeling import controller
 
 summary = controller.get_summary()
 
