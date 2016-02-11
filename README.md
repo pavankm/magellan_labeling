@@ -1,2 +1,2 @@
-# Magellan_labeling
+# Magellan labeling
 Handles labeling in Magellan
