@@ -1,4 +1,5 @@
 import model
+import pandas as pd
 def get_summary():
     result_df=model.get_label()
     labels_list = result_df.values
@@ -8,8 +9,7 @@ def get_summary():
             labels_count[label]=labels_count[label]+1
         else:
             labels_count[label]=1
-    for label in labels_count:
-        print(label,labels_count[label])
+    df = pd.DataFrame(pd.Series(labels_count),columns=list('c'))
+    return (df)
 
-
-get_summary()
+print get_summary()
