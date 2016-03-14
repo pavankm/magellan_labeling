@@ -1,26 +1,35 @@
-from model import ModelClass
+import model
 import pandas as pd
 
-class ControllerClass():
-    label_count_dict= dict()
-    model = ModelClass()
-    def get_summary(self):
-        self.set_labels()
-        result_df=self.model.get_label()
-        labels_list = result_df.label
-        for label in labels_list:
-            self.label_count_dict[label]=self.label_count_dict[label]+1
-        df = pd.DataFrame(pd.Series(self.label_count_dict),columns=list('c'))
-        return (df)
+label_count_dict= dict()
+def get_summary():
+    set_labels()
+    result_df=model.get_label()
+    labels_list = result_df.label
+    for label in labels_list:
+        label_count_dict[label]=label_count_dict[label]+1
+    df = pd.DataFrame(pd.Series(label_count_dict),columns=list('c'))
+    return (df)
 
-    def set_labels(self):
-        possible_labels = self.model.get_possible_label()
-        for label in possible_labels:
-            self.label_count_dict[label]=0
+def set_labels():
+    possible_labels = model.get_possible_label()
+    for label in possible_labels:
+        label_count_dict[label]=0
 
-    def get_rows(self,label):
-        return self.model.get_rows_label([label])
+def get_rows(label):
+    return model.get_rows_label([label])
 
-obj = ControllerClass()
-print obj.get_summary()
-print obj.get_rows('no')
+def update_labels(input_list):
+    if len(input_list) !=3:
+        print 'ERROR: Input [<ltable.id>,<rtable.id>,<label>] all 3 arguments should be string'
+        return False
+    if input_list[2] not in label_count_dict:
+        print 'ERROR: Not a valid label'
+        return False
+    return model.update_labels(input_list)
+
+
+set_labels()
+print get_summary()
+# print obj.get_rows('no')
+print update_labels(['a2','b3','yes'])
