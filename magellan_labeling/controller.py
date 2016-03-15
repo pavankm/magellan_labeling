@@ -16,20 +16,25 @@ def set_labels():
     for label in possible_labels:
         label_count_dict[label]=0
 
-def get_rows(label):
-    return model.get_rows_label([label])
+def get_rows(labels):
+
+    for label in labels:
+        if label not in label_count_dict:
+            print 'WARNING: Not a valid label',label
+            return False
+    return model.get_rows_given_label(labels)
+
 
 def update_labels(input_list):
-    if len(input_list) !=3:
-        print 'ERROR: Input [<ltable.id>,<rtable.id>,<label>] all 3 arguments should be string'
-        return False
-    if input_list[2] not in label_count_dict:
-        print 'ERROR: Not a valid label'
-        return False
-    return model.update_labels(input_list)
+    result = False
+    for row in input_list:
+        if len(row) !=3:
+            print 'WARNING: Input [<ltable.id>,<rtable.id>,<label>] all 3 arguments should be string'
+        if row[2] not in label_count_dict:
+            print 'WARNING: Not a valid label'
+        if model.update_labels(row):
+            result = True
+    return result
 
-
-set_labels()
-print get_summary()
-# print obj.get_rows('no')
-print update_labels(['a2','b3','yes'])
+# set_labels()
+# print get_summary()
