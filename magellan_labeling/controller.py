@@ -17,6 +17,14 @@ def get_summary():
 def get_rows(labels):
     return model.get_rows_for_given_label_list(labels)
 
+def get_labels():
+    """:return list of all possible """
+    return model.get_possible_label()
+
+def get_all_ids_and_labels():
+    """:return list of lists all id pairs form tableC"""
+    return model.get_id_pairs_and_labels()
+
 
 def update_labels_for_tuple_pairs(input_list):
     result = False
@@ -42,5 +50,11 @@ def update_labels_for_tuple_pairs(input_list):
             result = True
     return result
 
+def get_row_tablename_and_id(table,id):
+    return model.get_row_from_table(table,id)
+
 # set_labels()
 # print get_summary()
+
+#test id_pairs
+# print get_all_ids()
