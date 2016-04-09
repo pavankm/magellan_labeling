@@ -1,8 +1,16 @@
 import sys
 from PyQt4 import QtGui, QtCore
-
+import logging
 from magellan_labeling import controller
-from magellan_labeling import model
+
+changed_rows = list()
+
+#TODO submit button and update button
+#TODO: Event handler for both the buttons
+#TODO: Global list of rows updates to be flushed
+
+current_labels_modified = list()
+
 class Example(QtGui.QWidget):
     
     def __init__(self):
@@ -16,6 +24,8 @@ class Example(QtGui.QWidget):
 
         ########Label Selection Table##############
 
+        Labels_Layout =  QtGui.QHBoxLayout();
+
         label_table = QtGui.QTableWidget()
         labels = controller.get_labels()
 
@@ -24,16 +34,17 @@ class Example(QtGui.QWidget):
         label_table.setVerticalHeaderLabels(labels)
         label_table.setHorizontalHeaderLabels(['labels'])
 
-        radio_buttons = list()
         for i in range(len(labels)):
-            radio = QtGui.QRadioButton(labels[i])
-            radio.setChecked(1)
-            label_table.setCellWidget(i, 0, radio)
-            radio_buttons.append(radio)
+            item = QtGui.QTableWidgetItem(labels[i])
+            item.setFlags(QtCore.Qt.ItemIsUserCheckable |
+                                  QtCore.Qt.ItemIsEnabled)
+            item.setCheckState(QtCore.Qt.Unchecked)
 
-        Button_Group = QtGui.QButtonGroup(label_table)
-        for radio in radio_buttons:
-            Button_Group.addButton(radio)
+            #set the checkbox item to table
+            label_table.setItem(i, 0, item)
+
+        #Event handles for Label Selection
+        label_table.itemClicked.connect(self.handle_label_selected)
 
         #########Summary Frame#####################
         summary_table = QtGui.QTableWidget()
@@ -78,22 +89,43 @@ class Example(QtGui.QWidget):
 
             #Add radio for labels for the current tuple pairs
             labels = controller.get_labels()
-            radio_buttons = list()
+
+
+            buttons_list = list()
             for p in range(len(labels)):
-                radio = QtGui.QRadioButton(labels[p])
+                btn = QtGui.QPushButton(labels[p])
+                #Set the State Based on the label
+
+                #Checkable and Background Color
+                btn.setCheckable(True)
+                btn.setStyleSheet(QtCore.QString("QPushButton {background-color: None;} QPushButton:checked{background-color: lightblue;}"));
+
                 if label_given==labels[p]:
-                    radio.setChecked(1)
+                    btn.setChecked(1)
                 else:
-                    radio.setChecked(0)
-                tuple_table.setCellWidget(i, p, radio)
-                radio_buttons.append(radio)
+                    btn.setChecked(0)
 
-            Button_Group = QtGui.QButtonGroup(summary_table)
-            for radio in radio_buttons:
-                Button_Group.addButton(radio)
+                #Size of the button
+                #TODO: Size is restricted by the cell size
+                btn.setGeometry(QtCore.QRect(0, 550, 700, 800))
 
+                #Add to the Group of exclusive buttons
+                buttons_list.append(btn)
+
+                #Set to the Cell
+                tuple_table.setCellWidget(i, p, btn)
+
+
+            button_group = QtGui.QButtonGroup(summary_table)
+            for btn in buttons_list:
+                button_group.addButton(btn)
+
+            #TODO: Maintain a list of Changed labels in the callback function
+            # QtCore.QObject.connect(button_group,QtCore.SIGNAL("buttonClicked(int)"),
+		     #                button_group,QtCore.SLOT("labelchanged(int)"))
+            button_group.buttonClicked[QtGui.QAbstractButton].connect(lambda: self.labelchanged([id_pairs[k-1][0],id_pairs[k-1][1], btn]))
+            #Increment the row number in Table
             i+=1
-            # summary_table.itemClicked.connect(self.labelchanged)
 
 
         #####Splitter Added########
@@ -116,9 +148,23 @@ class Example(QtGui.QWidget):
         self.setWindowTitle('QtGui.QSplitter')
         self.showMaximized()
 
-    def labelchanged(self,item):
-        print item.row()
-        
+    def labelchanged(self,modified_tuple):
+        global current_labels_modified
+        # text = button.text()
+        current_labels_modified.append(modified_tuple)
+        pass
+
+
+    def handle_label_selected(self, item):
+        global current_labels_selected
+        if item.checkState() == QtCore.Qt.Checked:
+            current_labels_selected.append(item.text())
+            print('"%s" Checked' % item.text())
+        else:
+            current_labels_selected.remove(item.text())
+            print('"%s" UnChecked' % item.text())
+
+
 def main():
     
     app = QtGui.QApplication(sys.argv)
