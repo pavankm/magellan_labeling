@@ -27,6 +27,7 @@ def get_all_ids_and_labels():
 
 
 def update_labels_for_tuple_pairs(input_list):
+    """:arg list of lists of tuple pairs with labels"""
     result = False
     for row in input_list:
         if len(row) !=3:
@@ -49,6 +50,10 @@ def update_labels_for_tuple_pairs(input_list):
         if model.update_label_for_a_tuple_pair(row):
             result = True
     return result
+
+def get_tuple_ids_given_labels(labels):
+    """:arg list of labels"""
+    return model.get_idpairs_given_labels(labels)
 
 def get_row_tablename_and_id(table,id):
     return model.get_row_from_table(table,id)
