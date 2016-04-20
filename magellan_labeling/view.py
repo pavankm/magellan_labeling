@@ -70,7 +70,7 @@ class Example(QWidget):
             label_table.setItem(i, 0, item)
             # label_table.cell
 
-        label_table.setStyleSheet(QString("QTableWidget::indicator:checked{image: url(/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/images/check1.png);}") )
+        label_table.setStyleSheet(QString("QTableWidget::indicator:checked{image: url(/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/images/check3.png);}") )
         #Event handles for Label Selection
         # label_table.itemClicked.connect(self.filters_update_callback)
 
@@ -229,7 +229,7 @@ class Example(QWidget):
             i+=1
 
         # tuple_table.setColumnWidth(4,150)
-        # tuple_table.resizeColumnToContents(4)
+        tuple_table.resizeColumnToContents(4)
         # tuple_table.resizeColumnsToContents()
 
         font = QFont()
