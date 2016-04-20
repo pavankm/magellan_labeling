@@ -2,9 +2,9 @@ __author__='MushahidAlam'
 import pandas as pd
 import numpy as np
 import logging
-df_C = pd.read_csv("/afs/cs.wisc.edu/u/m/u/mushahid/private/CS799/magellan_labeling/magellan_labeling/data/sample.csv")
-df_A = pd.read_csv("/afs/cs.wisc.edu/u/m/u/mushahid/private/CS799/magellan_labeling/magellan_labeling/data/table_A.csv")
-df_B = pd.read_csv("/afs/cs.wisc.edu/u/m/u/mushahid/private/CS799/magellan_labeling/magellan_labeling/data/table_B.csv")
+df_C = pd.read_csv("/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/data/sample.csv")
+df_A = pd.read_csv("/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/data/table_A.csv")
+df_B = pd.read_csv("/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/data/table_B.csv")
 
 def get_label():
     result_dataframe=df_C.label
@@ -13,7 +13,7 @@ def get_label():
 
 def get_possible_label():
     #@todo the valid labels should be in a config value.
-    labels=['yes','no','not-sure','unlabeled'] # unlabeled,yes, no, not-sure
+    labels=['Yes','No','Not-Sure','Unlabeled'] # unlabeled,yes, no, not-sure
     return labels
 
 def get_rows_for_given_label_list(label_list):
@@ -40,7 +40,7 @@ def update_label_for_a_tuple_pair(tuple_pair):
         if any(df_C['rtable.ID']==tuple_pair[1]):
             df_C.loc[(df_C['ltable.ID']==tuple_pair[0]) & (df_C['rtable.ID']==tuple_pair[1]),'label']=tuple_pair[2]
             try:
-                df_C.to_csv("/afs/cs.wisc.edu/u/m/u/mushahid/private/CS799/magellan_labeling/magellan_labeling/data/sample.csv",mode = 'w', index=False)
+                df_C.to_csv("/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/data/sample.csv",mode = 'w', index=False)
             except:
                 logging.error("Update destionation file not found")
             return True
