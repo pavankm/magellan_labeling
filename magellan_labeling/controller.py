@@ -9,7 +9,7 @@ def get_summary():
     possible_labels = model.get_possible_label()
     for label in possible_labels:
         label_count_dict[label] = 0
-    result_df=model.get_label()
+    result_df=model.get_label_columns()
     labels_list = result_df.label
     for label in labels_list:
         label_count_dict[label]=label_count_dict[label]+1

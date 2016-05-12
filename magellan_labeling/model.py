@@ -8,7 +8,7 @@ df_A = pd.read_csv("/Users/mushahidalam/CS799/magellan_labeling/magellan_labelin
 df_B = pd.read_csv("/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/data/table_B.csv")
 
 
-def get_label():
+def get_label_columns():
     """
     :return: dataframe containing labels in table C
     """

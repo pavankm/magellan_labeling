@@ -35,6 +35,10 @@ class myLabel(QLabel):
         self.tuple_pair = tuple_pair
 
     def mousePressEvent(self, QMouseEvent):
+        """
+        :param QMouseEvent:
+        :return:
+        """
         Dialog = MyDialog(self.tuple_pair)
         Dialog.exec_()
 
@@ -103,10 +107,10 @@ class MyDialog(QDialog):
 
 
 
-class Example(QWidget):
+class Labelling(QWidget):
 
     def __init__(self):
-        super(Example, self).__init__()
+        super(Labelling, self).__init__()
         self.initUI()
 
 
@@ -225,7 +229,9 @@ class Example(QWidget):
 
     def TupleLayout(self):
         """
-
+        Creates the tuple layout containing tuple pairs and their labels from table-C
+        also creates save and continue button on top of the layout to update table-c
+        with changed labels
         :return: tuple widget
         """
         global tuple_table
@@ -348,11 +354,13 @@ class Example(QWidget):
         tuple_widget.setLayout(tuple_layout)
         return tuple_widget
 
-    def show_tuple_pairs_clicked(self):
-        print "received events"
-        pass
-
     def initUI(self):
+        """
+        The Function sets up the the entire layout the labelling module.
+        It creates each of the widget-summary,tuple,filter by calling the corresponding function
+        and adds them to 2 splitters.
+        :return: None
+        """
         global tuple_table
         hbox = QVBoxLayout(self)
         hbox.setContentsMargins(1,1,1,1)
@@ -394,6 +402,10 @@ class Example(QWidget):
         self.showMaximized()
 
     def update_summary(self):
+        """
+        Updates the summary layout based on the new changes pushed to table-C csv file.
+        :return:None
+        """
         global summary_table
         summary_df = controller.get_summary()
         for i in range(len(summary_df.index)):
@@ -403,7 +415,7 @@ class Example(QWidget):
 
     def filter_tuples(self, labels_selected):
         """:arg list of labels selected to filter
-        Updates the tuple table based on the labels provided"""
+        Updates the tuple layout based on the labels provided"""
         global tuple_table
         global buttonLayout
         id_pairs = controller.get_tuple_ids_given_labels(labels_selected)
@@ -485,11 +497,22 @@ class Example(QWidget):
 
 
     def labelchanged(self, button):
+        """
+        Trigerred when any of the label button  associated with a tuple pair is changed
+        :param button: button clicked
+        :return:None
+        """
         global current_labels_modified
         key = button.tuple_pair[0]+button.tuple_pair[1]
         current_labels_modified[key] = button.tuple_pair
 
     def update_model(self):
+        """
+        trigerred when the save and continue button is clicked
+        Updates the csv file of the Table-C with the labels changed
+        dispays the time of the update beside the save and continue button
+        :return: None
+        """
         global current_labels_modified
         global saved_status_label
         update_list = list()
@@ -503,7 +526,9 @@ class Example(QWidget):
 
     def filter_update_callback(self):
         """
-        :return:
+        Triggered when the Update button of the filter layout is clicked
+        Updates the tuple layout with tuple pairs of the labels selected in filter layout
+        :return:None
         """
         global label_table
         label_selected = list()
@@ -514,9 +539,8 @@ class Example(QWidget):
         self.filter_tuples(label_selected)
 
 def main():
-    
     app = QApplication(sys.argv)
-    ex = Example()
+    ex = Labelling()
     sys.exit(app.exec_())
 
 
