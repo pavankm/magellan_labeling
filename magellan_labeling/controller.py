@@ -1,8 +1,10 @@
 import model
 import pandas as pd
 import logging
-# label_count_dict= dict()
 def get_summary():
+    """
+    :return: dataframe with indexs as label names and corresponing count of each of the labels in the tabelC
+    """
     label_count_dict= dict()
     possible_labels = model.get_possible_label()
     for label in possible_labels:
@@ -15,19 +17,23 @@ def get_summary():
     return (df)
 
 def get_rows(labels):
+    """
+    :param labels:<list> of labels
+    :return: rows with given label in table C
+    """
     return model.get_rows_for_given_label_list(labels)
 
 def get_labels():
-    """:return list of all possible """
+    """:return <list> of all possible """
     return model.get_possible_label()
 
 def get_all_ids_and_labels():
-    """:return list of lists all id pairs form tableC"""
+    """:return <list> of lists all id pairs form tableC"""
     return model.get_id_pairs_and_labels()
 
 
 def update_labels_for_tuple_pairs(input_list):
-    """:arg list of lists of tuple pairs with labels"""
+    """:arg <list> of lists of tuple pairs with labels"""
     result = False
     for row in input_list:
         if len(row) !=3:
@@ -52,7 +58,7 @@ def update_labels_for_tuple_pairs(input_list):
     return result
 
 def get_tuple_ids_given_labels(labels):
-    """:arg list of labels"""
+    """:arg <list> of labels"""
     return model.get_idpairs_given_labels(labels)
 
 def get_row_tablename_and_id(table,id):

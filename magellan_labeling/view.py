@@ -16,11 +16,21 @@ saved_status_label = None
 
 class TupleButtons(QPushButton):
     def __init__(self,text, tuple_pair):
+        """
+        :param text: <string> to be displayed on button
+        :param tuple_pair: <list> of two tuple ids to be associated with button>
+        :return:object initialized of class TupleButtons
+        """
         super(TupleButtons, self).__init__(text)
         self.tuple_pair = tuple_pair
 
 class myLabel(QLabel):
     def __init__(self,text, tuple_pair):
+        """
+        :param text: <string> text to be displayed for the label
+        :param tuple_pair: <list> of 2 tuple id's to be associated with the label
+        :return:mylabel object
+        """
         super(myLabel, self).__init__(text)
         self.tuple_pair = tuple_pair
 
@@ -30,41 +40,63 @@ class myLabel(QLabel):
 
 class MyDialog(QDialog):
     def __init__(self, tuple_pairs, parent=None):
-
+        """
+        Triggered when view_tuple_pair label is pressed
+        Displays a window of the tuple pairs where rows are attributes and columns are tuple id's
+        Note: Assuming same scheme for both the tuples
+        :param tuple_pairs: tuple pairs associated with the window
+        :param parent: None
+        :return: None
+        """
         super(MyDialog, self).__init__(parent)
 
+        #Get the rows from table A & B
         tuple1 = controller.get_row_tablename_and_id('A',tuple_pairs[0])
         tuple2 = controller.get_row_tablename_and_id('B',tuple_pairs[1])
+
+        #Create a table to be disaplyed in the window
         tuple_pair_table = QTableWidget(self)
         tuple_pair_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         tuple_pair_table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
+        #obtain the attributes to be displayed
+        #since same scheme is assumed only tuple1 columns is used
         attr_names = list(tuple1.columns)
         tuple_pair_table.setColumnCount(2)
         tuple_pair_table.setRowCount(len(attr_names))
         tuple_pair_table.setVerticalHeaderLabels(attr_names)
         tuple_pair_table.setHorizontalHeaderLabels(['tableA','tableB'])
+
+        #background color of the table
         tuple_pair_table.setStyleSheet(QString(" background-color: rgb(255,255,255);"))
 
+        #For each attributes of tuple 1 add to the table
         for j in range(len(tuple1.columns)):
             item = QTableWidgetItem(str(tuple1.iget_value(0, j)))
             item.setBackgroundColor(QColor.fromRgb(255,254,228,255))
             item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
             tuple_pair_table.setItem(j,0,item)
 
+        #For each attributes of tuple 2 add to the table
         for j in range(len(tuple2.columns)):
             item = QTableWidgetItem(str(tuple2.iget_value(0, j)))
             item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
             item.setBackgroundColor(QColor.fromRgb(255,254,228,255))
             tuple_pair_table.setItem(j,1,item)
 
+        #set initial width of the column of each tuple
         tuple_pair_table.setColumnWidth(0,180)
         tuple_pair_table.setColumnWidth(1,180)
 
 
+        #Add the table to the grid
         layout = QGridLayout(self)
         layout.addWidget(tuple_pair_table,0,0)
         self.setLayout(layout)
+
+        #calculations to determine the desired row and height of the window
+        #Note: if the initial column width is not set then the below calculations won't work
+        #because the the column width are intilized only when rendered, i.e, dynamically
         dialogWidth = tuple_pair_table.columnWidth(0)*2+tuple_pair_table.verticalHeader().length()
         dialogHeight= tuple_pair_table.rowHeight(0)*len(attr_names)+tuple_pair_table.verticalHeader().width()
         self.setMinimumSize(dialogWidth, dialogHeight)
@@ -79,6 +111,11 @@ class Example(QWidget):
 
 
     def FilterLayout(self):
+        """
+        Creates the filter layout which displays all labels which can be filtered
+        Update button refreshs the tuple layout with rows for the label selected
+        :return:Filter wdiget
+        """
         global label_table
         # global appStyle
         filter_layout = QVBoxLayout()
@@ -135,6 +172,11 @@ class Example(QWidget):
         return filter_widget
 
     def SummaryLayout(self):
+        """
+        Creates the summary layout which lists each possible labels
+         and thier corresponding count of rows with that label in table-C
+        :return:summary widget
+        """
         global summary_table
 
         summary_layout = QVBoxLayout()
@@ -182,6 +224,10 @@ class Example(QWidget):
         return summary_widget
 
     def TupleLayout(self):
+        """
+
+        :return: tuple widget
+        """
         global tuple_table
         global saved_status_label
         global buttonLayout
