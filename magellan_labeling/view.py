@@ -7,10 +7,6 @@ from magellan_labeling import controller
 #define QT_NO_USERDATA
 changed_rows = list()
 
-#TODO submit button and update button
-#TODO: Event handler for both the buttons
-#TODO: Global list of rows updates to be flushed
-
 current_labels_modified = dict()
 buttonLayout = None
 summary_table = None
@@ -22,6 +18,58 @@ class TupleButtons(QPushButton):
     def __init__(self,text, tuple_pair):
         super(TupleButtons, self).__init__(text)
         self.tuple_pair = tuple_pair
+
+class myLabel(QLabel):
+    def __init__(self,text, tuple_pair):
+        super(myLabel, self).__init__(text)
+        self.tuple_pair = tuple_pair
+
+    def mousePressEvent(self, QMouseEvent):
+        Dialog = MyDialog(self.tuple_pair)
+        Dialog.exec_()
+
+class MyDialog(QDialog):
+    def __init__(self, tuple_pairs, parent=None):
+
+        super(MyDialog, self).__init__(parent)
+
+        tuple1 = controller.get_row_tablename_and_id('A',tuple_pairs[0])
+        tuple2 = controller.get_row_tablename_and_id('B',tuple_pairs[1])
+        tuple_pair_table = QTableWidget(self)
+        tuple_pair_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        tuple_pair_table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        attr_names = list(tuple1.columns)
+        tuple_pair_table.setColumnCount(2)
+        tuple_pair_table.setRowCount(len(attr_names))
+        tuple_pair_table.setVerticalHeaderLabels(attr_names)
+        tuple_pair_table.setHorizontalHeaderLabels(['tableA','tableB'])
+        tuple_pair_table.setStyleSheet(QString(" background-color: rgb(255,255,255);"))
+
+        for j in range(len(tuple1.columns)):
+            item = QTableWidgetItem(str(tuple1.iget_value(0, j)))
+            item.setBackgroundColor(QColor.fromRgb(255,254,228,255))
+            item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
+            tuple_pair_table.setItem(j,0,item)
+
+        for j in range(len(tuple2.columns)):
+            item = QTableWidgetItem(str(tuple2.iget_value(0, j)))
+            item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
+            item.setBackgroundColor(QColor.fromRgb(255,254,228,255))
+            tuple_pair_table.setItem(j,1,item)
+
+        tuple_pair_table.setColumnWidth(0,180)
+        tuple_pair_table.setColumnWidth(1,180)
+
+
+        layout = QGridLayout(self)
+        layout.addWidget(tuple_pair_table,0,0)
+        self.setLayout(layout)
+        dialogWidth = tuple_pair_table.columnWidth(0)*2+tuple_pair_table.verticalHeader().length()
+        dialogHeight= tuple_pair_table.rowHeight(0)*len(attr_names)+tuple_pair_table.verticalHeader().width()
+        self.setMinimumSize(dialogWidth, dialogHeight)
+
+
 
 class Example(QWidget):
 
@@ -51,14 +99,10 @@ class Example(QWidget):
         label_table.setMaximumWidth(150)
         labels = controller.get_labels()
         label_table.setColumnCount(len(labels))
-
         label_table.setColumnCount(1)
         label_table.setRowCount(len(labels))
         label_table.verticalHeader().hide()
         label_table.horizontalHeader().hide()
-        # label_table.setColumnWidth(1,500)
-        # label_table.setHorizontalHeaderLabels(["Show Tuple Pairs with \nLabels:"])
-        # label_table.resizeColumnToContents(0)
         label_table.setColumnWidth(0,150)
         for i in range(len(labels)):
             item = QTableWidgetItem(labels[i])
@@ -66,13 +110,9 @@ class Example(QWidget):
             item.setFlags(Qt.ItemIsUserCheckable |
                                   Qt.ItemIsEnabled)
             item.setCheckState(Qt.Checked)
-            #set the checkbox item to table
             label_table.setItem(i, 0, item)
-            # label_table.cell
 
-        label_table.setStyleSheet(QString("QTableWidget::indicator:checked{image: url(/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/images/check3.png);}") )
-        #Event handles for Label Selection
-        # label_table.itemClicked.connect(self.filters_update_callback)
+        label_table.setStyleSheet(QString("QTableWidget::indicator:checked{image: url(/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/images/check4.png);}") )
 
 
         filter_button = QPushButton("Update")
@@ -175,12 +215,14 @@ class Example(QWidget):
                 item = QTableWidgetItem(str(row_1.iget_value(0, j)))
                 item.setBackgroundColor(QColor.fromRgb(255,254,228,255))
                 item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
+                tuple_table.resizeRowToContents(i)
                 tuple_table.setItem(i,j,item)
             i+=1
             for j in range(len(row_2.columns)):
                 item = QTableWidgetItem(str(row_2.iget_value(0, j)))
                 item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
                 item.setBackgroundColor(QColor.fromRgb(255,254,228,255))
+                tuple_table.resizeRowToContents(i)
                 tuple_table.setItem(i,j,item)
             i+=1
 
@@ -192,11 +234,8 @@ class Example(QWidget):
 
             for p in range(len(labels)):
                 btn = TupleButtons(labels[p], [id_pairs[k-1][0],id_pairs[k-1][1], labels[p]])
-                #Set the State Based on the label
 
                 #Checkable and Background Color
-                # data =  [id_pairs[k-1][0],id_pairs[k-1][1]]
-                # btn.clicked.connect(lambda: self.labelchanged([id_pairs[k-1][0],id_pairs[k-1][1], str(btn.text())]))
                 btn.setCheckable(True)
                 btn.setStyleSheet(QString("QPushButton {background-color: rgb(240,240,240);} QPushButton:checked{background-color: rgb(200,226,200);}"));
 
@@ -215,22 +254,17 @@ class Example(QWidget):
                 #Set to the Cell
                 tuple_table.setCellWidget(i, p+1, btn)
 
+            view_tuple_pairs = myLabel('View Tuple Pairs',[id_pairs[k-1][0],id_pairs[k-1][1]])
+            view_tuple_pairs.setStyleSheet("text-decoration: underline; color: rgb(14,28,227,255);")
 
+            tuple_table.setCellWidget(i, p+2, view_tuple_pairs)
             button_group = QButtonGroup(tuple_table)
             for btn in buttons_list:
                 button_group.addButton(btn)
-            #TODO: Maintain a list of Changed labels in the callback function
-            # QObject.connect(button_group,SIGNAL("buttonClicked(int)"),
-		     #                button_group,SLOT("labelchanged(int)"))
-
-            # button_group.tuple_pair(id_pairs[k-1][0])
             button_group.buttonClicked[QAbstractButton].connect(self.labelchanged)
-            #Increment the row number in Table
             i+=1
 
-        # tuple_table.setColumnWidth(4,150)
         tuple_table.resizeColumnToContents(4)
-        # tuple_table.resizeColumnsToContents()
 
         font = QFont()
         font.setPixelSize(14)
@@ -258,7 +292,6 @@ class Example(QWidget):
         tuple_title_layout.addWidget(tuple_layout_title)
         tuple_title_layout.addWidget(saved_status_label)
         tuple_title_layout.addWidget(submit_button)
-        # label.setText("Mushahid")
 
         tuple_layout = QVBoxLayout()
         tuple_layout.setContentsMargins(1,1,1,1)
@@ -268,6 +301,10 @@ class Example(QWidget):
         tuple_widget = QWidget()
         tuple_widget.setLayout(tuple_layout)
         return tuple_widget
+
+    def show_tuple_pairs_clicked(self):
+        print "received events"
+        pass
 
     def initUI(self):
         global tuple_table
@@ -291,7 +328,6 @@ class Example(QWidget):
         splitter2.addWidget(filter_widget)
         splitter2.setSizes([200,500])
         splitter2.setMaximumWidth(110)
-        # splitter2.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         splitter = QSplitter(Qt.Horizontal)
         splitter.setStyleSheet(QString(" background-color: rgb(255,255,255);"))
@@ -301,7 +337,6 @@ class Example(QWidget):
 
         splitter2.setContentsMargins(10,10,10,10)
         tuple_widget.setContentsMargins(1,1,1,1)
-        # splitter.setStretchFactor(1,0)
 
         splitter.setSizes([100,600])
         hbox.addWidget(splitter)
@@ -324,7 +359,6 @@ class Example(QWidget):
         """:arg list of labels selected to filter
         Updates the tuple table based on the labels provided"""
         global tuple_table
-        #print tuple_table
         global buttonLayout
         id_pairs = controller.get_tuple_ids_given_labels(labels_selected)
         if len(id_pairs)==0:
@@ -363,7 +397,6 @@ class Example(QWidget):
                 tuple_table.setItem(i,j,item)
             i+=1
 
-            #Add radio for labels for the current tuple pairs
             labels = controller.get_labels()
 
             buttons_list = list()
@@ -371,11 +404,6 @@ class Example(QWidget):
 
             for p in range(len(labels)):
                 btn = TupleButtons(labels[p], [id_pairs[k-1][0],id_pairs[k-1][1], labels[p]])
-                #Set the State Based on the label
-
-                #Checkable and Background Color
-                # data =  [id_pairs[k-1][0],id_pairs[k-1][1]]
-                # btn.clicked.connect(lambda: self.labelchanged([id_pairs[k-1][0],id_pairs[k-1][1], str(btn.text())]))
                 btn.setCheckable(True)
                 btn.setStyleSheet(QString("QPushButton {background-color: rgb(240,240,240);} QPushButton:checked{background-color: rgb(200,226,200);}"));
 
@@ -398,18 +426,11 @@ class Example(QWidget):
             button_group = QButtonGroup(tuple_table)
             for btn in buttons_list:
                 button_group.addButton(btn)
-            #TODO: Maintain a list of Changed labels in the callback function
-            # QObject.connect(button_group,SIGNAL("buttonClicked(int)"),
-		     #                button_group,SLOT("labelchanged(int)"))
 
-            # button_group.tuple_pair(id_pairs[k-1][0])
             button_group.buttonClicked[QAbstractButton].connect(self.labelchanged)
-            #Increment the row number in Table
             i+=1
 
-        # tuple_table.setColumnWidth(4,150)
         tuple_table.resizeColumnToContents(4)
-        # tuple_table.resizeColumnsToContents()
 
         buttonLayout.addWidget(tuple_table)
         # return tuple_widget
@@ -435,6 +456,9 @@ class Example(QWidget):
 
 
     def filter_update_callback(self):
+        """
+        :return:
+        """
         global label_table
         label_selected = list()
         possible_labels = controller.get_labels()
@@ -442,15 +466,6 @@ class Example(QWidget):
             if label_table.item(1,i).checkState() !=0:
                 label_selected.append(str(label_table.item(1,i).text()))
         self.filter_tuples(label_selected)
-
-        # global current_labels_selected
-        # if item.checkState() == Checked:
-        #     current_labels_selected.append(item.text())
-        #     #print('"%s" Checked' % item.text())
-        # else:
-        #     current_labels_selected.remove(item.text())
-        #     #print('"%s" UnChecked' % item.text())
-
 
 def main():
     
