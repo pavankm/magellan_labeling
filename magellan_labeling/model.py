@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 import logging
 
-df_C = pd.read_csv("/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/data/sample.csv")
-df_A = pd.read_csv("/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/data/table_A.csv")
-df_B = pd.read_csv("/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/data/table_B.csv")
+df_C = pd.read_csv("/home/pavan/ds_independent_study/magellan_labeling/magellan_labeling/data/sample.csv")
+df_A = pd.read_csv("/home/pavan/ds_independent_study/magellan_labeling/magellan_labeling/data/table_A.csv")
+df_B = pd.read_csv("/home/pavan/ds_independent_study/magellan_labeling/magellan_labeling/data/table_B.csv")
 
 
 def get_label_columns():
