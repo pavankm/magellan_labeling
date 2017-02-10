@@ -152,7 +152,7 @@ class Labelling(QWidget):
             item.setCheckState(Qt.Checked)
             label_table.setItem(i, 0, item)
 
-        label_table.setStyleSheet(QString(
+        label_table.setStyleSheet(str(
             "QTableWidget::indicator:checked{image: url(/Users/mushahidalam/CS799/magellan_labeling/magellan_labeling/images/check4.png);}"))
 
         filter_button = QPushButton("Update")
@@ -260,7 +260,7 @@ class Labelling(QWidget):
             k += 1
             for j in range(len(row_1.columns)):
                 item = QTableWidgetItem(str(row_1.iget_value(0, j)))
-                item.setBackgroundColor(QColor.fromRgb(255, 254, 228, 255))
+                # item.setBackgroundColor(QColor.fromRgb(255, 254, 228, 255))
                 item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
                 tuple_table.resizeRowToContents(i)
                 tuple_table.setItem(i, j, item)
@@ -268,7 +268,7 @@ class Labelling(QWidget):
             for j in range(len(row_2.columns)):
                 item = QTableWidgetItem(str(row_2.iget_value(0, j)))
                 item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
-                item.setBackgroundColor(QColor.fromRgb(255, 254, 228, 255))
+                # item.setBackgroundColor(QColor.fromRgb(255, 254, 228, 255))
                 tuple_table.resizeRowToContents(i)
                 tuple_table.setItem(i, j, item)
             i += 1
@@ -284,7 +284,7 @@ class Labelling(QWidget):
 
                 # Checkable and Background Color
                 btn.setCheckable(True)
-                btn.setStyleSheet(QString(
+                btn.setStyleSheet(str(
                     "QPushButton {background-color: rgb(240,240,240);} QPushButton:checked{background-color: rgb(200,226,200);}"));
 
                 if label_given == labels[p]:
@@ -372,14 +372,14 @@ class Labelling(QWidget):
 
         #####Splitter Added########
         splitter2 = QSplitter(Qt.Vertical)
-        splitter2.setStyleSheet(QString(" background-color: rgb(255,255,255);"))
+        splitter2.setStyleSheet(str(" background-color: rgb(255,255,255);"))
         splitter2.addWidget(summary_widget)
         splitter2.addWidget(filter_widget)
         splitter2.setSizes([200, 500])
         splitter2.setMaximumWidth(110)
 
         splitter = QSplitter(Qt.Horizontal)
-        splitter.setStyleSheet(QString(" background-color: rgb(255,255,255);"))
+        splitter.setStyleSheet(str(" background-color: rgb(255,255,255);"))
         splitter.addWidget(splitter2)
         splitter.addWidget(tuple_widget)
         splitter.setMaximumWidth(110)
