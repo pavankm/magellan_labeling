@@ -12,7 +12,7 @@ def get_label_columns():
     """
     :return: dataframe containing labels in table C
     """
-    #@todo: have a contract to get columnname with labels.
+    # @todo: have a contract to get columnname with labels.
     result_dataframe = df_C.label
     label_df = pd.DataFrame(result_dataframe)
     return label_df
