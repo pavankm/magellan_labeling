@@ -1,6 +1,6 @@
 import sys
 import datetime
-from PyQt4.Qt import *
+from PyQt5.Qt import *
 import logging
 from magellan_labeling import controller
 
